@@ -35,7 +35,7 @@ public class Simulation extends Application {
 
         ObjModelImporter objModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("/mikrofala.obj");
+            URL url = this.getClass().getResource("mikrofala.obj");
             objModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -54,8 +54,8 @@ public class Simulation extends Application {
         micro.setTranslateZ(-1107);
 
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
-        micro.setMaterial(material);
+        //material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
+        //micro.setMaterial(material);
 
         Rotate rotateX = new Rotate(30, 0, 0, 0, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(20, 0, 0, 0, Rotate.Y_AXIS);
