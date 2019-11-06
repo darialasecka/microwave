@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
@@ -12,8 +13,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -24,15 +25,53 @@ public class Simulation extends Application {
     private double mousePosY;
     private double mouseOldX;
     private double mouseOldY;
+    private int angle = 90;
+    private double doorPivotX = -2;
+    private double doorPivotZ = -2;
+    private long lastDoorAction = System.currentTimeMillis();
+
+
+
 
     @Override
     public void start(Stage stage) {
-        Box background = new Box(950, 700, 1);
-        background.setTranslateX(400);
-        background.setTranslateY(250);
-        PhongMaterial image = new PhongMaterial();
-        image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.png")));
-        background.setMaterial(image);
+        Box[] background = new Box[6];
+        for (int i = 0; i < 6; i++) {
+            background[i] = new Box(3000, 3000, 1);
+            PhongMaterial image = new PhongMaterial();
+            image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.jpg")));
+            background[i].setMaterial(image);
+        }
+
+        background[0].setTranslateX(400);
+        background[0].setTranslateY(250);
+
+        background[1].setTranslateX(400);
+        background[1].setTranslateY(250);
+        background[1].setTranslateZ(-2200);
+
+        background[2].setTranslateZ(-1105);
+        background[2].setTranslateX(-400);
+        background[2].setRotationAxis(Rotate.Y_AXIS);
+        background[2].setRotate(90);
+
+        background[3].setTranslateZ(-1105);
+        background[3].setTranslateX(800);
+        background[3].setRotationAxis(Rotate.Y_AXIS);
+        background[3].setRotate(-90);
+
+        background[4].setTranslateZ(-1105);         //4 - sufit
+        background[4].setTranslateX(800);
+        background[4].setTranslateY(-1200);
+        background[4].setRotationAxis(Rotate.X_AXIS);
+        background[4].setRotate(90);
+
+        background[5].setTranslateZ(-1105);         //5 - podłoga
+        background[5].setTranslateX(400);
+        background[5].setRotationAxis(Rotate.X_AXIS);
+        background[5].setRotate(-90);
+        background[5].setTranslateY(1000);
+
 
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
@@ -67,8 +106,17 @@ public class Simulation extends Application {
         plate.setTranslateY(301);
         plate.setTranslateZ(-1107);
         PhongMaterial platePattern = new PhongMaterial();
-        platePattern.setDiffuseMap(new Image(getClass().getResourceAsStream("/plate.png")));
+        platePattern.setDiffuseMap(new Image(getClass().getResourceAsStream("/plate.jpg")));
         plate.setMaterial(platePattern);
+
+        Box food = new Box(0.6, 0.6, 0.6);
+        food.setTranslateX(399.6);
+        food.setTranslateY(300.5);
+        food.setTranslateZ(-1107.1);
+        PhongMaterial melon = new PhongMaterial();
+        melon.setDiffuseMap(new Image(getClass().getResourceAsStream("/melon.png")));
+        food.setMaterial(melon);
+
 
         micro.setTranslateX(400);
         micro.setTranslateY(301);
@@ -84,29 +132,45 @@ public class Simulation extends Application {
         doors.setTranslateY(301);
         doors.setTranslateZ(-1107);
 
-        Rotate rotateX = new Rotate(30, 0, 0, 0, Rotate.X_AXIS);
-        Rotate rotateY = new Rotate(20, 0, 0, 0, Rotate.Y_AXIS);
-        micro.getTransforms().addAll(rotateX, rotateY);
+        //Group microwaveGroup = new Group();
+
+        Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
+        Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
+        /*micro.getTransforms().addAll(rotateX, rotateY);
         doors.getTransforms().addAll(rotateX, rotateY);
         plate.getTransforms().addAll(rotateX, rotateY);
+        food.getTransforms().addAll(rotateX, rotateY);*/
+        //microwaveGroup.getChildren().addAll(micro, doors, plate, food);
+        //microwaveGroup.setRotate(45.0);
+        //microwaveGroup.getTransforms().addAll(rotateX, rotateY);
 
 
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            int angle = 90;
             switch (event.getCode()) {
                 case SPACE:
                     RotateTransition rt = new RotateTransition(Duration.millis(200), doors);
-                    rt.setAxis(Rotate.Y_AXIS);
-                    rt.setByAngle(angle);
-                    rt.play();
-                    angle = 90;
+                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
+                    if(System.currentTimeMillis() > lastDoorAction + 200) {
+                        lastDoorAction = System.currentTimeMillis();
+
+                        rt.setAxis(Rotate.Y_AXIS);
+                        rt.setByAngle(angle);
+                        rt.play();
+
+                        tt.setByX(doorPivotX);
+                        tt.setByZ(doorPivotZ);
+                        tt.play();
+
+                        angle = -angle;
+                        doorPivotX = -doorPivotX;
+                        doorPivotZ = -doorPivotZ;
+                    }
                     break;
                 case ENTER:
-                    rt = new RotateTransition(Duration.millis(9000), plate);
+                    rt = new RotateTransition(Duration.millis(9000), food);
                     rt.setAxis(Rotate.Y_AXIS);
                     rt.setByAngle(360);
                     rt.play();
-                    angle = 90;
                     break;
             }
         });
@@ -120,10 +184,13 @@ public class Simulation extends Application {
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
 
-        Group root = new Group(micro, doors, plate, light, background);
-
+        Group root = new Group(micro, doors, plate, light, food, background[0], background[1], background[2], background[3],
+                                background[4], background[5]);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
+
+        camera.getTransforms().addAll(rotateX, rotateY);
+
         scene.setCamera(camera);
 
         scene.setOnMousePressed(me -> {
