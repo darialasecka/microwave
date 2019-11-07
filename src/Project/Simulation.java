@@ -11,11 +11,13 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -109,6 +111,23 @@ public class Simulation extends Application {
         platePattern.setDiffuseMap(new Image(getClass().getResourceAsStream("/plate.jpg")));
         plate.setMaterial(platePattern);
 
+		ObjModelImporter tableModelImporter = new ObjModelImporter();
+		try {
+			URL url = this.getClass().getResource("stolik.obj");
+			tableModelImporter.read(url);
+		} catch (ImportException ie) {
+			Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+		}
+		PhongMaterial wood = new PhongMaterial();
+		wood.setDiffuseMap(new Image(getClass().getResourceAsStream("/wood.jpg")));
+		MeshView table = tableModelImporter.getImport()[0];
+		Scale scale = new Scale(10,10,10);
+		table.setTranslateX(400);
+		table.setTranslateY(306.2);//- góra, + dół
+		table.setTranslateZ(-1107);
+		table.getTransforms().addAll(scale);
+		table.setMaterial(wood);
+
         Box food = new Box(0.6, 0.6, 0.6);
         food.setTranslateX(399.6);
         food.setTranslateY(300.5);
@@ -180,11 +199,16 @@ public class Simulation extends Application {
         light.setTranslateY(290);
         light.setTranslateZ(-1115);
 
+        PointLight light2 = new PointLight(Color.web("#262626"));//ciemny szary tylko lepszy xD //4F4F4F
+        light2.setTranslateX(350);
+        light2.setTranslateY(290);
+        light2.setTranslateZ(-2000);
+
         PerspectiveCamera camera = new PerspectiveCamera();
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
 
-        Group root = new Group(micro, doors, plate, light, food, background[0], background[1], background[2], background[3],
+        Group root = new Group(micro, doors, plate, table, light, light2, food, background[0], background[1], background[2], background[3],
                                 background[4], background[5]);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
