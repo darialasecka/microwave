@@ -1,6 +1,5 @@
 package Project;
 
-import java.awt.*;
 import java.net.URL;
 import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
@@ -8,7 +7,6 @@ import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
@@ -16,10 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -36,6 +32,8 @@ public class Simulation extends Application {
     private long cookingTime = 0;
     private long lastCookingAction = System.currentTimeMillis();
     private double cookingCycles = 1;
+    public boolean isCookingThread = false;
+
 
 
 
@@ -250,6 +248,12 @@ public class Simulation extends Application {
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
                     if (System.currentTimeMillis() > lastDoorAction + 200 &&
                         System.currentTimeMillis() > lastCookingAction + cookingTime) {
+                        String pathname;
+                        if (areDoorsOpen)   //closing
+                            pathname = "src/sounds/close.mp3";
+                        else pathname = "src/sounds/open.mp3";
+                        playSound playOpenCloseSound = new playSound(pathname);
+                        playOpenCloseSound.start();
                         areDoorsOpen = !areDoorsOpen;
                         lastDoorAction = System.currentTimeMillis();
 
@@ -267,10 +271,10 @@ public class Simulation extends Application {
                     }
                     break;
                 case ENTER:                 //cooking
-                    if (!areDoorsOpen) {
+                    if (!areDoorsOpen && !isCookingThread) {
                         cookingTime = 9000;
                         cookingCycles = cookingTime / 9000;
-                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass);
+                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this);
                         animate.start();
                         lastCookingAction = System.currentTimeMillis();
                         rt = new RotateTransition(Duration.millis(cookingTime), food);
