@@ -1,5 +1,6 @@
 package Project;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
@@ -34,6 +35,7 @@ public class Simulation extends Application {
     private boolean areDoorsOpen = false;
     private long cookingTime = 0;
     private long lastCookingAction = System.currentTimeMillis();
+    private double cookingCycles = 1;
 
 
 
@@ -83,7 +85,7 @@ public class Simulation extends Application {
         background[5].setMaterial(floor);
 
 
-		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+		//Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
         ObjModelImporter objModelImporter = new ObjModelImporter();
         try {
@@ -94,7 +96,9 @@ public class Simulation extends Application {
         }
 
 		MeshView micro = objModelImporter.getImport()[0];
-		PhongMaterial mat = new PhongMaterial();
+        micro.setTranslateX(400);
+        micro.setTranslateY(301);
+        micro.setTranslateZ(-1107);
 
         ObjModelImporter doorModelImporter = new ObjModelImporter();
         try {
@@ -103,6 +107,8 @@ public class Simulation extends Application {
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
         }
+
+
         ObjModelImporter plateModelImporter = new ObjModelImporter();
         try {
             URL url = this.getClass().getResource("tacka.obj");
@@ -145,11 +151,14 @@ public class Simulation extends Application {
         melon.setDiffuseMap(new Image(getClass().getResourceAsStream("/melon.png")));
         food.setMaterial(melon);
 
-
-        micro.setTranslateX(400);
-        micro.setTranslateY(301);
-        micro.setTranslateZ(-1107);
-
+        Box glass = new Box(4, 3, 0.1);
+        glass.setTranslateX(399.6);
+        glass.setTranslateY(299.8);
+        glass.setTranslateZ(-1108.4);
+        PhongMaterial transparent = new PhongMaterial();
+        transparent.setDiffuseColor(new Color(1, 0.65,0.1,0.3));
+        glass.setMaterial(transparent);
+        glass.setVisible(false);
 
         MeshView doors = doorModelImporter.getImport()[0];
         doors.setTranslateX(400);
@@ -167,7 +176,7 @@ public class Simulation extends Application {
 
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
-                case SPACE:
+                case SPACE:                 //opening microwave doors
                     RotateTransition rt = new RotateTransition(Duration.millis(200), doors);
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
                     if (System.currentTimeMillis() > lastDoorAction + 200 &&
@@ -186,15 +195,18 @@ public class Simulation extends Application {
                         angle = -angle;
                         doorPivotX = -doorPivotX;
                         doorPivotZ = -doorPivotZ;
-                    } else areDoorsOpen = true;
+                    }
                     break;
-                case ENTER:
-                    cookingTime = 9000;
+                case ENTER:                 //cooking
                     if (!areDoorsOpen) {
+                        cookingTime = 9000;
+                        cookingCycles = cookingTime / 9000;
+                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass);
+                        animate.start();
                         lastCookingAction = System.currentTimeMillis();
                         rt = new RotateTransition(Duration.millis(cookingTime), food);
                         rt.setAxis(Rotate.Y_AXIS);
-                        rt.setByAngle(360);
+                        rt.setByAngle(360 * cookingCycles);
                         rt.play();
                     }
                     break;
@@ -227,7 +239,8 @@ public class Simulation extends Application {
                 background[3],
                 background[4],
                 background[5],
-                table);
+                table,
+                glass);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
 
