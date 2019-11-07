@@ -19,10 +19,9 @@ public class CookingTimeHandler extends Thread {
 		try {
 			CookingTimeHandler.sleep(cookingTime);
 		} catch (Exception e) {}
-		box.setVisible(false);
 		Media sound = new Media(new File("src/bell.mp3").toURI().toString());
 		MediaPlayer mediaPlayer = new MediaPlayer(sound);
 		mediaPlayer.play();
+		box.setVisible(false);
 	}
 }
- 
