@@ -88,6 +88,15 @@ public class Simulation extends Application {
 		MeshView micro = objModelImporter.getImport()[0];
 		PhongMaterial mat = new PhongMaterial();
 
+        ObjModelImporter knobModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("pokretlo.obj");
+            knobModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView knob = knobModelImporter.getImport()[0];
+
         ObjModelImporter doorModelImporter = new ObjModelImporter();
         try {
             URL url = this.getClass().getResource("drzwi.obj");
@@ -141,6 +150,10 @@ public class Simulation extends Application {
         micro.setTranslateY(301);
         micro.setTranslateZ(-1107);
 
+
+        knob.setTranslateX(400);
+        knob.setTranslateY(301);
+        knob.setTranslateZ(-1106.9);
         //PhongMaterial material = new PhongMaterial();
         //material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
         //micro.setMaterial(material);
@@ -255,7 +268,7 @@ public class Simulation extends Application {
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
 
-        Group root = new Group(micro, doors, plate, table, light, light2, food, cabinet, drawers, drawers2,
+        Group root = new Group(micro, knob, doors, plate, table, light, light2, food, cabinet, drawers, drawers2,
                                 background[0], background[1], background[2], background[3],
                                 background[4], background[5]);
         Scene scene = new Scene(root, 800, 600, true);
