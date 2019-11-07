@@ -23,12 +23,12 @@ public class CookingTimeHandler extends Thread {
 		playSound startSound = new playSound("src/sounds/startMMMM.mp3");
 		startSound.start();
 		try {
-			CookingTimeHandler.sleep(1900);
-			playSound sound = new playSound("src/sounds/MMMM.mp3");
+			CookingTimeHandler.sleep(1800);
+			playSound sound = new playSound("src/sounds/MMMM.mp3", true);
 			sound.start();
-			CookingTimeHandler.sleep(cookingTime - 1900);
+			CookingTimeHandler.sleep(cookingTime - 1800);
+			sound.stopSounds();
 		} catch (Exception e) {}
-
 		mediaPlayer.play();
 		box.setVisible(false);
 		sim.isCookingThread = false;
@@ -38,14 +38,27 @@ public class CookingTimeHandler extends Thread {
 class playSound extends Thread {
 	private String path;
 	private AudioClip mediaPlayer;
+	private boolean loop = false;
 
 	public playSound(String path) {
 		this.path = path;
 		mediaPlayer = new AudioClip(new File(path).toURI().toString());
 	}
 
+	public playSound(String path, boolean loop) {
+		this.path = path;
+		mediaPlayer = new AudioClip(new File(path).toURI().toString());
+		mediaPlayer.setCycleCount(100);
+		this.loop = loop;
+	}
+
 	public void run() {
 		mediaPlayer.play();
+	}
+
+	public void stopSounds() {
+		loop = false;
+		mediaPlayer.stop();
 	}
 
 }
