@@ -123,7 +123,7 @@ public class Simulation extends Application {
 		MeshView table = tableModelImporter.getImport()[0];
 		Scale scale = new Scale(10,10,10);
 		table.setTranslateX(400);
-		table.setTranslateY(306.2);//- góra, + dół
+		table.setTranslateY(306.2);
 		table.setTranslateZ(-1107);
 		table.getTransforms().addAll(scale);
 		table.setMaterial(wood);
@@ -141,7 +141,7 @@ public class Simulation extends Application {
         micro.setTranslateY(301);
         micro.setTranslateZ(-1107);
 
-        PhongMaterial material = new PhongMaterial();
+        //PhongMaterial material = new PhongMaterial();
         //material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
         //micro.setMaterial(material);
 
@@ -152,6 +152,53 @@ public class Simulation extends Application {
         doors.setTranslateZ(-1107);
 
         //Group microwaveGroup = new Group();
+
+        PhongMaterial marble = new PhongMaterial();
+        marble.setDiffuseMap(new Image(getClass().getResourceAsStream("/marble.png")));
+
+        ObjModelImporter cabinetModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("podwojna_szafka.obj");
+            cabinetModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView cabinet = cabinetModelImporter.getImport()[0];
+        scale = new Scale(1.4,1.4,1.4);
+        cabinet.setTranslateX(415.8);
+        cabinet.setTranslateY(311.5);
+        cabinet.setTranslateZ(-1100.5);
+        cabinet.getTransforms().addAll(scale);
+        cabinet.setMaterial(marble);
+
+        ObjModelImporter drawersModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("z_szufladami.obj");
+            drawersModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView drawers = drawersModelImporter.getImport()[0];
+        drawers.setTranslateX(428.5);
+        drawers.setTranslateY(311.5);
+        drawers.setTranslateZ(-1100.5);
+        drawers.getTransforms().addAll(scale);
+        drawers.setMaterial(marble);
+
+        ObjModelImporter drawers2ModelImporter = new ObjModelImporter(); //muszę to zrobić jeszce rez jak chcę mieć 2
+        try {
+            URL url = this.getClass().getResource("z_szufladami.obj");
+            drawers2ModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView drawers2 = drawers2ModelImporter.getImport()[0];
+        drawers2.setTranslateX(389.5);
+        drawers2.setTranslateY(311.5);
+        drawers2.setTranslateZ(-1100.5);
+        drawers2.getTransforms().addAll(scale);
+        drawers2.setMaterial(marble);
+
 
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
@@ -208,7 +255,8 @@ public class Simulation extends Application {
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
 
-        Group root = new Group(micro, doors, plate, table, light, light2, food, background[0], background[1], background[2], background[3],
+        Group root = new Group(micro, doors, plate, table, light, light2, food, cabinet, drawers, drawers2,
+                                background[0], background[1], background[2], background[3],
                                 background[4], background[5]);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
