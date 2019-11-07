@@ -31,7 +31,7 @@ public class Simulation extends Application {
     private double doorPivotX = -2;
     private double doorPivotZ = -2;
     private long lastDoorAction = System.currentTimeMillis();
-
+    private boolean areDoorsOpen = false;
 
 
 
@@ -39,17 +39,17 @@ public class Simulation extends Application {
     public void start(Stage stage) {
         Box[] background = new Box[6];
         for (int i = 0; i < 6; i++) {
-            background[i] = new Box(3000, 3000, 1);
+            background[i] = new Box(2000, 1400, 1);
             PhongMaterial image = new PhongMaterial();
             image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.jpg")));
             background[i].setMaterial(image);
+            background[i].setTranslateY(400);
+
         }
 
         background[0].setTranslateX(400);
-        background[0].setTranslateY(250);
 
         background[1].setTranslateX(400);
-        background[1].setTranslateY(250);
         background[1].setTranslateZ(-2200);
 
         background[2].setTranslateZ(-1105);
@@ -58,21 +58,27 @@ public class Simulation extends Application {
         background[2].setRotate(90);
 
         background[3].setTranslateZ(-1105);
-        background[3].setTranslateX(800);
         background[3].setRotationAxis(Rotate.Y_AXIS);
         background[3].setRotate(-90);
+        background[3].setTranslateX(800);
 
         background[4].setTranslateZ(-1105);         //4 - sufit
         background[4].setTranslateX(800);
-        background[4].setTranslateY(-1200);
+        background[4].setTranslateY(-2000);
         background[4].setRotationAxis(Rotate.X_AXIS);
         background[4].setRotate(90);
+        PhongMaterial ceiling = new PhongMaterial();
+        ceiling.setDiffuseMap(new Image(getClass().getResourceAsStream("/sufit.jpg")));
+        background[4].setMaterial(ceiling);
 
         background[5].setTranslateZ(-1105);         //5 - podłoga
         background[5].setTranslateX(400);
         background[5].setRotationAxis(Rotate.X_AXIS);
         background[5].setRotate(-90);
         background[5].setTranslateY(1000);
+        PhongMaterial floor = new PhongMaterial();
+        floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
+        background[5].setMaterial(floor);
 
 
 		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
@@ -118,6 +124,7 @@ public class Simulation extends Application {
 		} catch (ImportException ie) {
 			Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
 		}
+
 		PhongMaterial wood = new PhongMaterial();
 		wood.setDiffuseMap(new Image(getClass().getResourceAsStream("/wood.jpg")));
 		MeshView table = tableModelImporter.getImport()[0];
@@ -151,25 +158,18 @@ public class Simulation extends Application {
         doors.setTranslateY(301);
         doors.setTranslateZ(-1107);
 
-        //Group microwaveGroup = new Group();
 
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
-        /*micro.getTransforms().addAll(rotateX, rotateY);
-        doors.getTransforms().addAll(rotateX, rotateY);
-        plate.getTransforms().addAll(rotateX, rotateY);
-        food.getTransforms().addAll(rotateX, rotateY);*/
-        //microwaveGroup.getChildren().addAll(micro, doors, plate, food);
-        //microwaveGroup.setRotate(45.0);
-        //microwaveGroup.getTransforms().addAll(rotateX, rotateY);
 
 
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case SPACE:
+                    areDoorsOpen = !areDoorsOpen;
                     RotateTransition rt = new RotateTransition(Duration.millis(200), doors);
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
-                    if(System.currentTimeMillis() > lastDoorAction + 200) {
+                    if (System.currentTimeMillis() > lastDoorAction + 200) {
                         lastDoorAction = System.currentTimeMillis();
 
                         rt.setAxis(Rotate.Y_AXIS);
@@ -183,20 +183,22 @@ public class Simulation extends Application {
                         angle = -angle;
                         doorPivotX = -doorPivotX;
                         doorPivotZ = -doorPivotZ;
-                    }
+                    } else areDoorsOpen = true;
                     break;
                 case ENTER:
-                    rt = new RotateTransition(Duration.millis(9000), food);
-                    rt.setAxis(Rotate.Y_AXIS);
-                    rt.setByAngle(360);
-                    rt.play();
+                    if (!areDoorsOpen) {
+                        rt = new RotateTransition(Duration.millis(9000), food);
+                        rt.setAxis(Rotate.Y_AXIS);
+                        rt.setByAngle(360);
+                        rt.play();
+                    }
                     break;
             }
         });
 
         PointLight light = new PointLight();
         light.setTranslateX(400);
-        light.setTranslateY(290);
+        light.setTranslateY(280);
         light.setTranslateZ(-1115);
 
         PointLight light2 = new PointLight(Color.web("#262626"));//ciemny szary tylko lepszy xD //4F4F4F
@@ -208,8 +210,19 @@ public class Simulation extends Application {
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
 
-        Group root = new Group(micro, doors, plate, table, light, light2, food, background[0], background[1], background[2], background[3],
-                                background[4], background[5]);
+        Group root = new Group(micro,
+                doors,
+                plate,
+                light,
+                light2,
+                food,
+                background[0],
+                background[1],
+                background[2],
+                background[3],
+                background[4],
+                background[5],
+                table);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
 
