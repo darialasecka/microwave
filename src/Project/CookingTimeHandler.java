@@ -20,8 +20,13 @@ public class CookingTimeHandler extends Thread {
 	public void run() {
 		sim.isCookingThread = true;
 		box.setVisible(true);
+		playSound startSound = new playSound("src/sounds/startMMMM.mp3");
+		startSound.start();
 		try {
-			CookingTimeHandler.sleep(cookingTime);
+			CookingTimeHandler.sleep(1900);
+			playSound sound = new playSound("src/sounds/MMMM.mp3");
+			sound.start();
+			CookingTimeHandler.sleep(cookingTime - 1900);
 		} catch (Exception e) {}
 
 		mediaPlayer.play();
