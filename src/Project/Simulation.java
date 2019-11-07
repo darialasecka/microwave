@@ -41,7 +41,7 @@ public class Simulation extends Application {
     public void start(Stage stage) {
         Box[] background = new Box[6];
         for (int i = 0; i < 6; i++) {
-            background[i] = new Box(2000, 1400, 1);
+            background[i] = new Box(2200, 1700, 1);
             PhongMaterial image = new PhongMaterial();
             image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.jpg")));
             background[i].setMaterial(image);
@@ -65,10 +65,12 @@ public class Simulation extends Application {
         background[3].setTranslateX(800);
 
         background[4].setTranslateZ(-1105);         //4 - sufit
-        background[4].setTranslateX(800);
-        background[4].setTranslateY(-2000);
+        background[4].setTranslateX(400);
+        background[4].setTranslateY(-550);
         background[4].setRotationAxis(Rotate.X_AXIS);
         background[4].setRotate(90);
+        background[4].setWidth(2500);
+        background[4].setHeight(2700);
         PhongMaterial ceiling = new PhongMaterial();
         ceiling.setDiffuseMap(new Image(getClass().getResourceAsStream("/sufit.jpg")));
         background[4].setMaterial(ceiling);
@@ -78,6 +80,8 @@ public class Simulation extends Application {
         background[5].setRotationAxis(Rotate.X_AXIS);
         background[5].setRotate(-90);
         background[5].setTranslateY(1000);
+        background[5].setWidth(2500);
+        background[5].setHeight(2200);
         PhongMaterial floor = new PhongMaterial();
         floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
         background[5].setMaterial(floor);
@@ -190,9 +194,6 @@ public class Simulation extends Application {
         micro.setMaterial(material);
         doors.setMaterial(material);
 
-        PhongMaterial marble = new PhongMaterial();
-        marble.setDiffuseMap(new Image(getClass().getResourceAsStream("/marble.png")));
-
         ObjModelImporter cabinetModelImporter = new ObjModelImporter();
         try {
             URL url = this.getClass().getResource("podwojna_szafka.obj");
@@ -204,9 +205,23 @@ public class Simulation extends Application {
         scale = new Scale(1.4,1.4,1.4);
         cabinet.setTranslateX(415.8);
         cabinet.setTranslateY(311.5);
-        cabinet.setTranslateZ(-1100.5);
+        cabinet.setTranslateZ(-1050.5);
         cabinet.getTransforms().addAll(scale);
-        cabinet.setMaterial(marble);
+        cabinet.setMaterial(wood);
+
+        ObjModelImporter cabinet2ModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("podwojna_szafka.obj");
+            cabinet2ModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView cabinet2 = cabinet2ModelImporter.getImport()[0];
+        cabinet2.setTranslateX(380.8);
+        cabinet2.setTranslateY(311.5);
+        cabinet2.setTranslateZ(-1050.5);
+        cabinet2.getTransforms().addAll(scale);
+        cabinet2.setMaterial(wood);
 
         ObjModelImporter drawersModelImporter = new ObjModelImporter();
         try {
@@ -218,9 +233,9 @@ public class Simulation extends Application {
         MeshView drawers = drawersModelImporter.getImport()[0];
         drawers.setTranslateX(428.5);
         drawers.setTranslateY(311.5);
-        drawers.setTranslateZ(-1100.5);
+        drawers.setTranslateZ(-1050.5);
         drawers.getTransforms().addAll(scale);
-        drawers.setMaterial(marble);
+        drawers.setMaterial(wood);
 
         ObjModelImporter drawers2ModelImporter = new ObjModelImporter(); //muszę to zrobić jeszce rez jak chcę mieć 2
         try {
@@ -230,12 +245,39 @@ public class Simulation extends Application {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
         }
         MeshView drawers2 = drawers2ModelImporter.getImport()[0];
-        drawers2.setTranslateX(389.5);
+        drawers2.setTranslateX(393.3);
         drawers2.setTranslateY(311.5);
-        drawers2.setTranslateZ(-1100.5);
+        drawers2.setTranslateZ(-1050.5);
         drawers2.getTransforms().addAll(scale);
-        drawers2.setMaterial(marble);
+        drawers2.setMaterial(wood);
 
+        ObjModelImporter dishwasherModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("zmywarka.obj");
+            dishwasherModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView dishwasher = dishwasherModelImporter.getImport()[0];
+        dishwasher.setTranslateX(401.7);
+        dishwasher.setTranslateY(311.5);
+        dishwasher.setTranslateZ(-1049.5);
+        dishwasher.getTransforms().addAll(scale);
+        dishwasher.setMaterial(wood);
+
+        ObjModelImporter refrigeratorModelImporter = new ObjModelImporter();
+        try {
+            URL url = this.getClass().getResource("lodowka.obj");
+            refrigeratorModelImporter.read(url);
+        } catch (ImportException ie) {
+            Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
+        }
+        MeshView refrigerator = refrigeratorModelImporter.getImport()[0];
+        refrigerator.setTranslateX(437.5);
+        refrigerator.setTranslateY(311.5);
+        refrigerator.setTranslateZ(-1050.5);
+        refrigerator.getTransforms().addAll(scale);
+        refrigerator.setMaterial(wood);
 
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
@@ -315,9 +357,12 @@ public class Simulation extends Application {
                 table,
                 glass,
                 cabinet,
+                cabinet2,
                 knob,
                 drawers,
-                drawers2);
+                drawers2,
+                dishwasher,
+                refrigerator);
         Scene scene = new Scene(root, 800, 600, true);
         stage.setResizable(false);
 
@@ -341,7 +386,6 @@ public class Simulation extends Application {
         stage.setScene(scene);
         stage.setTitle("Microwave Simulator");
         stage.show();
-
 
     }
 
