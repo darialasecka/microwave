@@ -32,6 +32,8 @@ public class Simulation extends Application {
     private double doorPivotZ = -2;
     private long lastDoorAction = System.currentTimeMillis();
     private boolean areDoorsOpen = false;
+    private long cookingTime = 0;
+    private long lastCookingAction = System.currentTimeMillis();
 
 
 
@@ -148,16 +150,16 @@ public class Simulation extends Application {
         micro.setTranslateY(301);
         micro.setTranslateZ(-1107);
 
-        PhongMaterial material = new PhongMaterial();
-        //material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
-        //micro.setMaterial(material);
-
 
         MeshView doors = doorModelImporter.getImport()[0];
         doors.setTranslateX(400);
         doors.setTranslateY(301);
         doors.setTranslateZ(-1107);
 
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseMap(new Image(getClass().getResourceAsStream("/grey.jpg")));
+        micro.setMaterial(material);
+        doors.setMaterial(material);
 
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
@@ -166,10 +168,11 @@ public class Simulation extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case SPACE:
-                    areDoorsOpen = !areDoorsOpen;
                     RotateTransition rt = new RotateTransition(Duration.millis(200), doors);
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
-                    if (System.currentTimeMillis() > lastDoorAction + 200) {
+                    if (System.currentTimeMillis() > lastDoorAction + 200 &&
+                        System.currentTimeMillis() > lastCookingAction + cookingTime) {
+                        areDoorsOpen = !areDoorsOpen;
                         lastDoorAction = System.currentTimeMillis();
 
                         rt.setAxis(Rotate.Y_AXIS);
@@ -186,8 +189,10 @@ public class Simulation extends Application {
                     } else areDoorsOpen = true;
                     break;
                 case ENTER:
+                    cookingTime = 9000;
                     if (!areDoorsOpen) {
-                        rt = new RotateTransition(Duration.millis(9000), food);
+                        lastCookingAction = System.currentTimeMillis();
+                        rt = new RotateTransition(Duration.millis(cookingTime), food);
                         rt.setAxis(Rotate.Y_AXIS);
                         rt.setByAngle(360);
                         rt.play();
