@@ -354,7 +354,7 @@ public class Simulation extends Application {
                 background[3],
                 background[4],
                 background[5],
-                //table,
+                table,
                 glass,
                 cabinet,
                 cabinet2,
