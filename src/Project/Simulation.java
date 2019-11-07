@@ -41,7 +41,7 @@ public class Simulation extends Application {
     public void start(Stage stage) {
         Box[] background = new Box[6];
         for (int i = 0; i < 6; i++) {
-            background[i] = new Box(2000, 1400, 1);
+            background[i] = new Box(2200, 1700, 1);
             PhongMaterial image = new PhongMaterial();
             image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.jpg")));
             background[i].setMaterial(image);
@@ -65,10 +65,12 @@ public class Simulation extends Application {
         background[3].setTranslateX(800);
 
         background[4].setTranslateZ(-1105);         //4 - sufit
-        background[4].setTranslateX(800);
-        background[4].setTranslateY(-2000);
+        background[4].setTranslateX(400);
+        background[4].setTranslateY(-550);
         background[4].setRotationAxis(Rotate.X_AXIS);
         background[4].setRotate(90);
+        background[4].setWidth(2500);
+        background[4].setHeight(2700);
         PhongMaterial ceiling = new PhongMaterial();
         ceiling.setDiffuseMap(new Image(getClass().getResourceAsStream("/sufit.jpg")));
         background[4].setMaterial(ceiling);
@@ -78,6 +80,8 @@ public class Simulation extends Application {
         background[5].setRotationAxis(Rotate.X_AXIS);
         background[5].setRotate(-90);
         background[5].setTranslateY(1000);
+        background[5].setWidth(2500);
+        background[5].setHeight(2200);
         PhongMaterial floor = new PhongMaterial();
         floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
         background[5].setMaterial(floor);
@@ -350,7 +354,7 @@ public class Simulation extends Application {
                 background[3],
                 background[4],
                 background[5],
-                table,
+                //table,
                 glass,
                 cabinet,
                 cabinet2,
