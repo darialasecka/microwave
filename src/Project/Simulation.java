@@ -277,25 +277,16 @@ public class Simulation extends Application {
             }
         });
 
-        doors.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        doors.setOnMouseClicked(event -> {
                 ah.handleDoorEvent(doors);
-            }
         });
 
-        timeKnob.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        timeKnob.setOnMouseClicked(event -> {
                 ah.handleTimeKnobEvent(timeKnob);
-            }
         });
 
-        knob.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        knob.setOnMouseClicked(event -> {
                 ah.handlePowerKnobEvent(knob);
-            }
         });
 
         stage.setScene(scene);
@@ -354,6 +345,7 @@ public class Simulation extends Application {
         PhongMaterial floor = new PhongMaterial();
         floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/panele.jpg")));
         background[5].setMaterial(floor);
+
         return background;
     }
 
