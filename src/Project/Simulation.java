@@ -31,7 +31,7 @@ public class Simulation extends Application {
         for (int i = 0; i < 6; i++) {
             background[i] = new Box(2200, 1700, 1);
             PhongMaterial image = new PhongMaterial();
-            image.setDiffuseMap(new Image(getClass().getResourceAsStream("/background_image.jpg")));
+            image.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/background_image.jpg")));
             background[i].setMaterial(image);
             background[i].setTranslateY(400);
 
@@ -60,7 +60,7 @@ public class Simulation extends Application {
         background[4].setWidth(2500);
         background[4].setHeight(2700);
         PhongMaterial ceiling = new PhongMaterial();
-        ceiling.setDiffuseMap(new Image(getClass().getResourceAsStream("/sufit.jpg")));
+        ceiling.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/sufit.jpg")));
         background[4].setMaterial(ceiling);
 
         background[5].setTranslateZ(-1105);         //5 - podłoga
@@ -71,13 +71,13 @@ public class Simulation extends Application {
         background[5].setWidth(2500);
         background[5].setHeight(2200);
         PhongMaterial floor = new PhongMaterial();
-        floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
+        floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/panele.jpg")));
         background[5].setMaterial(floor);
 
 
         ObjModelImporter objModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("mikrofala.obj");
+            URL url = this.getClass().getResource("/objects3D/mikrofala.obj");
             objModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -91,7 +91,7 @@ public class Simulation extends Application {
         ObjModelImporter knobModelImporter = new ObjModelImporter();
         ObjModelImporter timeKnobModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("pokretlo.obj");
+            URL url = this.getClass().getResource("/objects3D/pokretlo.obj");
             knobModelImporter.read(url);
             timeKnobModelImporter.read(url);
         } catch (ImportException ie) {
@@ -111,7 +111,7 @@ public class Simulation extends Application {
 
         ObjModelImporter doorModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("drzwi.obj");
+            URL url = this.getClass().getResource("/objects3D/drzwi.obj");
             doorModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -120,7 +120,7 @@ public class Simulation extends Application {
 
         ObjModelImporter plateModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("tacka.obj");
+            URL url = this.getClass().getResource("/objects3D/tacka.obj");
             plateModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -131,19 +131,19 @@ public class Simulation extends Application {
         plate.setTranslateY(301);
         plate.setTranslateZ(-1107);
         PhongMaterial platePattern = new PhongMaterial();
-        platePattern.setDiffuseMap(new Image(getClass().getResourceAsStream("/plate.jpg")));
+        platePattern.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/plate.jpg")));
         plate.setMaterial(platePattern);
 
 		ObjModelImporter tableModelImporter = new ObjModelImporter();
 		try {
-			URL url = this.getClass().getResource("stolik.obj");
+			URL url = this.getClass().getResource("/objects3D/stolik.obj");
 			tableModelImporter.read(url);
 		} catch (ImportException ie) {
 			Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
 		}
 
 		PhongMaterial wood = new PhongMaterial();
-		wood.setDiffuseMap(new Image(getClass().getResourceAsStream("/wood.jpg")));
+		wood.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/wood.jpg")));
 		MeshView table = tableModelImporter.getImport()[0];
 		Scale scale = new Scale(10,10,10);
 		table.setTranslateX(400);
@@ -157,7 +157,7 @@ public class Simulation extends Application {
         food.setTranslateY(300.5);
         food.setTranslateZ(-1107.1);
         PhongMaterial melon = new PhongMaterial();
-        melon.setDiffuseMap(new Image(getClass().getResourceAsStream("/melon.png")));
+        melon.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/melon.png")));
         food.setMaterial(melon);
 
         Box glass = new Box(4, 3, 0.1);
@@ -184,13 +184,13 @@ public class Simulation extends Application {
         doors.setTranslateZ(-1107);
 
         PhongMaterial material = new PhongMaterial();
-        material.setDiffuseMap(new Image(getClass().getResourceAsStream("/grey.jpg")));
+        material.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/grey.jpg")));
         micro.setMaterial(material);
         doors.setMaterial(material);
 
         ObjModelImporter cabinetModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("podwojna_szafka.obj");
+            URL url = this.getClass().getResource("/objects3D/podwojna_szafka.obj");
             cabinetModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -205,7 +205,7 @@ public class Simulation extends Application {
 
         ObjModelImporter cabinet2ModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("podwojna_szafka.obj");
+            URL url = this.getClass().getResource("/objects3D/podwojna_szafka.obj");
             cabinet2ModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -219,7 +219,7 @@ public class Simulation extends Application {
 
         ObjModelImporter drawersModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("z_szufladami.obj");
+            URL url = this.getClass().getResource("/objects3D/z_szufladami.obj");
             drawersModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -233,7 +233,7 @@ public class Simulation extends Application {
 
         ObjModelImporter drawers2ModelImporter = new ObjModelImporter(); //muszę to zrobić jeszce rez jak chcę mieć 2
         try {
-            URL url = this.getClass().getResource("z_szufladami.obj");
+            URL url = this.getClass().getResource("/objects3D/z_szufladami.obj");
             drawers2ModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -247,7 +247,7 @@ public class Simulation extends Application {
 
         ObjModelImporter dishwasherModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("zmywarka.obj");
+            URL url = this.getClass().getResource("/objects3D/zmywarka.obj");
             dishwasherModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
@@ -261,7 +261,7 @@ public class Simulation extends Application {
 
         ObjModelImporter refrigeratorModelImporter = new ObjModelImporter();
         try {
-            URL url = this.getClass().getResource("lodowka.obj");
+            URL url = this.getClass().getResource("/objects3D/lodowka.obj");
             refrigeratorModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
