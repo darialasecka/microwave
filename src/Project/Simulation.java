@@ -27,12 +27,18 @@ public class Simulation extends Application {
     private int angle = 90;
     private double doorPivotX = -2;
     private double doorPivotZ = -2;
-    private long lastDoorAction = System.currentTimeMillis();
+    private long lastDoorAction = 0;
+    private long lastCookingAction = 0;
+    private long lastTimeKnobAction = -2000;
+    private long lastPowerKnobAction = -2000;
     private boolean areDoorsOpen = false;
-    private long cookingTime = 0;
-    private long lastCookingAction = System.currentTimeMillis();
     private double cookingCycles = 1;
+    public int timeKnobPos = 0;
+    private int powerKnobPos = 0;
+    public long cookingTime = 0;
     public boolean isCookingThread = false;
+    public RotateTransition rt;
+
 
 
 
@@ -103,13 +109,25 @@ public class Simulation extends Application {
         micro.setTranslateZ(-1107);
 
         ObjModelImporter knobModelImporter = new ObjModelImporter();
+        ObjModelImporter timeKnobModelImporter = new ObjModelImporter();
         try {
             URL url = this.getClass().getResource("pokretlo.obj");
             knobModelImporter.read(url);
+            timeKnobModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
         }
+
         MeshView knob = knobModelImporter.getImport()[0];
+        MeshView timeKnob = timeKnobModelImporter.getImport()[0];
+
+        knob.setTranslateX(400);
+        knob.setTranslateY(301);
+        knob.setTranslateZ(-1106.9);
+
+        timeKnob.setTranslateX(400);
+        timeKnob.setTranslateZ(-1106.9);
+        timeKnob.setTranslateY(knob.getTranslateY() + 0.79);     //obnizamy o 0.79
 
         ObjModelImporter doorModelImporter = new ObjModelImporter();
         try {
@@ -175,10 +193,6 @@ public class Simulation extends Application {
         micro.setTranslateY(301);
         micro.setTranslateZ(-1107);
 
-
-        knob.setTranslateX(400);
-        knob.setTranslateY(301);
-        knob.setTranslateZ(-1106.9);
         //PhongMaterial material = new PhongMaterial();
         //material.setDiffuseMap(new Image(getClass().getResourceAsStream("grey.png")));
         //micro.setMaterial(material);
@@ -286,7 +300,7 @@ public class Simulation extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case SPACE:                 //opening microwave doors
-                    RotateTransition rt = new RotateTransition(Duration.millis(200), doors);
+                    rt = new RotateTransition(Duration.millis(200), doors);
                     TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
                     if (System.currentTimeMillis() > lastDoorAction + 200 &&
                         System.currentTimeMillis() > lastCookingAction + cookingTime) {
@@ -313,15 +327,35 @@ public class Simulation extends Application {
                     }
                     break;
                 case ENTER:                 //cooking
-                    if (!areDoorsOpen && !isCookingThread) {
-                        cookingTime = 9000;
+                    if (!areDoorsOpen && !isCookingThread && cookingTime > 0 && powerKnobPos > 0) {
                         cookingCycles = cookingTime / 9000;
-                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this);
+                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this, timeKnob);
                         animate.start();
                         lastCookingAction = System.currentTimeMillis();
                         rt = new RotateTransition(Duration.millis(cookingTime), food);
                         rt.setAxis(Rotate.Y_AXIS);
                         rt.setByAngle(360 * cookingCycles);
+                        rt.play();
+                    }
+                    break;
+                case Q:
+                    if (System.currentTimeMillis() > lastTimeKnobAction + 2000 && timeKnobPos < 4 && !isCookingThread) {
+                        cookingTime += 4500;
+                        lastTimeKnobAction = System.currentTimeMillis();
+                        rt = new RotateTransition(Duration.millis(2000), timeKnob);
+                        rt.setAxis(Rotate.Z_AXIS);
+                        rt.setByAngle(90);
+                        timeKnobPos++;
+                        rt.play();
+                    }
+                    break;
+                case W:
+                    if (System.currentTimeMillis() > lastPowerKnobAction + 2000 && !isCookingThread) {
+                        lastPowerKnobAction = System.currentTimeMillis();
+                        rt = new RotateTransition(Duration.millis(2000), knob);
+                        rt.setAxis(Rotate.Z_AXIS);
+                        rt.setByAngle(90);
+                        powerKnobPos = ++powerKnobPos % 4;
                         rt.play();
                     }
                     break;
@@ -358,7 +392,8 @@ public class Simulation extends Application {
                 glass,
                 cabinet,
                 cabinet2,
-                //knob,
+                knob,
+                timeKnob,
                 drawers,
                 drawers2,
                 dishwasher,
