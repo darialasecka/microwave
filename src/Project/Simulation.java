@@ -5,9 +5,11 @@ import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -72,8 +74,6 @@ public class Simulation extends Application {
         floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
         background[5].setMaterial(floor);
 
-
-		//Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
         ObjModelImporter objModelImporter = new ObjModelImporter();
         try {
@@ -284,9 +284,6 @@ public class Simulation extends Application {
                 case SPACE:
                     ah.handleDoorEvent(doors);
                     break;
-                /*case ENTER:
-                    ah.handleCookingEvent(glass, food, timeKnob);
-                    break; */
                 case Q:
                     ah.handleTimeKnobEvent(timeKnob);
                     break;
@@ -295,6 +292,28 @@ public class Simulation extends Application {
                     break;
             }
         });
+
+        doors.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handleDoorEvent(doors);
+            }
+        });
+
+        timeKnob.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handleTimeKnobEvent(timeKnob);
+            }
+        });
+
+        knob.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handlePowerKnobEvent(knob);
+            }
+        });
+
 
         PointLight light = new PointLight();
         light.setTranslateX(400);
