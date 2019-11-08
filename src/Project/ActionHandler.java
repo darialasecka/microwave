@@ -71,7 +71,6 @@ public class ActionHandler extends Thread {
 			rt = new RotateTransition(Duration.millis(cookingTime), food);
 			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle(360 * cookingCycles);
-			System.out.println(cookingCycles);
 			rt.play();
 		}
 	}
