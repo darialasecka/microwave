@@ -12,11 +12,11 @@ import java.io.File;
 public class CookingTimeHandler extends Thread {
 	private long cookingTime;
 	private Box box;
-	private Simulation sim;
+	private ActionHandler sim;
 	private AudioClip mediaPlayer;
-	public MeshView knob;
+	protected MeshView knob;
 
-	public CookingTimeHandler(long cookingTime, Box box, Simulation sim, MeshView knob) {
+	public CookingTimeHandler(long cookingTime, Box box, ActionHandler sim, MeshView knob) {
 		this.cookingTime = cookingTime;
 		this.box = box;
 		this.sim = sim;
@@ -74,10 +74,10 @@ class playSound extends Thread {
 }
 
 class returnKnobToCorrectPosition extends Thread {
-	Simulation sim;
+	ActionHandler sim;
 	MeshView timeKnob;
 
-	public returnKnobToCorrectPosition(Simulation sim, MeshView timeKnob) {
+	public returnKnobToCorrectPosition(ActionHandler sim, MeshView timeKnob) {
 		this.sim = sim;
 		this.timeKnob = timeKnob;
 	}

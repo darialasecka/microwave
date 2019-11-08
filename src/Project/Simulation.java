@@ -4,12 +4,12 @@ import java.net.URL;
 import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
-import javafx.animation.RotateTransition;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -17,30 +17,12 @@ import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class Simulation extends Application {
     private double mousePosX;
     private double mousePosY;
     private double mouseOldX;
     private double mouseOldY;
-    private int angle = 90;
-    private double doorPivotX = -2;
-    private double doorPivotZ = -2;
-    private long lastDoorAction = 0;
-    private long lastCookingAction = 0;
-    private long lastTimeKnobAction = -2000;
-    private long lastPowerKnobAction = -2000;
-    private boolean areDoorsOpen = false;
-    private double cookingCycles = 1;
-    public int timeKnobPos = 0;
-    private int powerKnobPos = 0;
-    public long cookingTime = 0;
-    public boolean isCookingThread = false;
-    public RotateTransition rt;
-
-
-
 
 
     @Override
@@ -92,8 +74,6 @@ public class Simulation extends Application {
         floor.setDiffuseMap(new Image(getClass().getResourceAsStream("/panele.jpg")));
         background[5].setMaterial(floor);
 
-
-		//Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
         ObjModelImporter objModelImporter = new ObjModelImporter();
         try {
@@ -296,71 +276,9 @@ public class Simulation extends Application {
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
 
+        ActionHandler ah = new ActionHandler(glass, food, timeKnob);
+        ah.start();
 
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case SPACE:                 //opening microwave doors
-                    rt = new RotateTransition(Duration.millis(200), doors);
-                    TranslateTransition tt = new TranslateTransition(Duration.millis(200), doors);
-                    if (System.currentTimeMillis() > lastDoorAction + 200 &&
-                        System.currentTimeMillis() > lastCookingAction + cookingTime) {
-                        String pathname;
-                        if (areDoorsOpen)   //closing
-                            pathname = "src/sounds/close.mp3";
-                        else pathname = "src/sounds/open.mp3";
-                        playSound playOpenCloseSound = new playSound(pathname);
-                        playOpenCloseSound.start();
-                        areDoorsOpen = !areDoorsOpen;
-                        lastDoorAction = System.currentTimeMillis();
-
-                        rt.setAxis(Rotate.Y_AXIS);
-                        rt.setByAngle(angle);
-                        rt.play();
-
-                        tt.setByX(doorPivotX);
-                        tt.setByZ(doorPivotZ);
-                        tt.play();
-
-                        angle = -angle;
-                        doorPivotX = -doorPivotX;
-                        doorPivotZ = -doorPivotZ;
-                    }
-                    break;
-                case ENTER:                 //cooking
-                    if (!areDoorsOpen && !isCookingThread && cookingTime > 0 && powerKnobPos > 0) {
-                        cookingCycles = cookingTime / 9000;
-                        CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this, timeKnob);
-                        animate.start();
-                        lastCookingAction = System.currentTimeMillis();
-                        rt = new RotateTransition(Duration.millis(cookingTime), food);
-                        rt.setAxis(Rotate.Y_AXIS);
-                        rt.setByAngle(360 * cookingCycles);
-                        rt.play();
-                    }
-                    break;
-                case Q:
-                    if (System.currentTimeMillis() > lastTimeKnobAction + 2000 && timeKnobPos < 4 && !isCookingThread) {
-                        cookingTime += 4500;
-                        lastTimeKnobAction = System.currentTimeMillis();
-                        rt = new RotateTransition(Duration.millis(2000), timeKnob);
-                        rt.setAxis(Rotate.Z_AXIS);
-                        rt.setByAngle(90);
-                        timeKnobPos++;
-                        rt.play();
-                    }
-                    break;
-                case W:
-                    if (System.currentTimeMillis() > lastPowerKnobAction + 2000 && !isCookingThread) {
-                        lastPowerKnobAction = System.currentTimeMillis();
-                        rt = new RotateTransition(Duration.millis(2000), knob);
-                        rt.setAxis(Rotate.Z_AXIS);
-                        rt.setByAngle(90);
-                        powerKnobPos = ++powerKnobPos % 4;
-                        rt.play();
-                    }
-                    break;
-            }
-        });
 
         PointLight light = new PointLight();
         light.setTranslateX(400);
@@ -375,6 +293,7 @@ public class Simulation extends Application {
         PerspectiveCamera camera = new PerspectiveCamera();
 		camera.setNearClip(0.001);
 		camera.setFarClip(100.0);
+        camera.getTransforms().addAll(rotateX, rotateY);
 
         Group root = new Group(micro,
                 doors,
@@ -400,9 +319,6 @@ public class Simulation extends Application {
                 refrigerator);
         Scene scene = new Scene(root, 800, 600, true);
         //stage.setResizable(false);
-
-        camera.getTransforms().addAll(rotateX, rotateY);
-
         scene.setCamera(camera);
 
         scene.setOnMousePressed(me -> {
@@ -416,6 +332,41 @@ public class Simulation extends Application {
             rotateY.setAngle(rotateY.getAngle()+(mousePosX - mouseOldX));
             mouseOldX = mousePosX;
             mouseOldY = mousePosY;
+        });
+
+        stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case SPACE:
+                    ah.handleDoorEvent(doors);
+                    break;
+                case Q:
+                    ah.handleTimeKnobEvent(timeKnob);
+                    break;
+                case W:
+                    ah.handlePowerKnobEvent(knob);
+                    break;
+            }
+        });
+
+        doors.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handleDoorEvent(doors);
+            }
+        });
+
+        timeKnob.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handleTimeKnobEvent(timeKnob);
+            }
+        });
+
+        knob.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ah.handlePowerKnobEvent(knob);
+            }
         });
 
         stage.setScene(scene);
