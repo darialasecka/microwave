@@ -358,7 +358,7 @@ public class Simulation extends Application {
                 glass,
                 cabinet,
                 cabinet2,
-                knob,
+                //knob,
                 drawers,
                 drawers2,
                 dishwasher,
