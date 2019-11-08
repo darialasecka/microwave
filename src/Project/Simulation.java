@@ -364,7 +364,7 @@ public class Simulation extends Application {
                 dishwasher,
                 refrigerator);
         Scene scene = new Scene(root, 800, 600, true);
-        stage.setResizable(false);
+        //stage.setResizable(false);
 
         camera.getTransforms().addAll(rotateX, rotateY);
 
