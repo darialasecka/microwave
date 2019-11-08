@@ -64,13 +64,14 @@ public class ActionHandler extends Thread {
 
 	public void handleCookingEvent(Box glass, Box food, MeshView timeKnob) {
 		if (!areDoorsOpen && !isCookingThread && cookingTime > 0 && powerKnobPos > 0 && System.currentTimeMillis() > lastTimeKnobAction + 2000) {
-			cookingCycles = cookingTime / 9000;
+			cookingCycles = cookingTime / 4500;
 			CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this, timeKnob);
 			animate.start();
 			lastCookingAction = System.currentTimeMillis();
 			rt = new RotateTransition(Duration.millis(cookingTime), food);
 			rt.setAxis(Rotate.Y_AXIS);
 			rt.setByAngle(360 * cookingCycles);
+			System.out.println(cookingCycles);
 			rt.play();
 		}
 	}
