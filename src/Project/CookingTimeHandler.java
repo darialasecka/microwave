@@ -1,7 +1,12 @@
 package Project;
 
+import javafx.animation.RotateTransition;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.MeshView;
+import javafx.scene.transform.Rotate;
+import javafx.util.Duration;
+
 import java.io.File;
 
 public class CookingTimeHandler extends Thread {
@@ -9,12 +14,14 @@ public class CookingTimeHandler extends Thread {
 	private Box box;
 	private Simulation sim;
 	private AudioClip mediaPlayer;
+	public MeshView knob;
 
-	public CookingTimeHandler(long cookingTime, Box box, Simulation sim) {
+	public CookingTimeHandler(long cookingTime, Box box, Simulation sim, MeshView knob) {
 		this.cookingTime = cookingTime;
 		this.box = box;
 		this.sim = sim;
 		mediaPlayer = new AudioClip(new File("src/sounds/bell.mp3").toURI().toString());
+		this.knob = knob;
 	}
 
 	public void run() {
@@ -23,6 +30,8 @@ public class CookingTimeHandler extends Thread {
 		playSound startSound = new playSound("src/sounds/startMMMM.mp3");
 		startSound.start();
 		try {
+			returnKnobToCorrectPosition knobThread = new returnKnobToCorrectPosition(sim, knob);
+			knobThread.start();
 			CookingTimeHandler.sleep(1800);
 			playSound sound = new playSound("src/sounds/MMMM.mp3", true);
 			sound.start();
@@ -32,6 +41,8 @@ public class CookingTimeHandler extends Thread {
 		mediaPlayer.play();
 		box.setVisible(false);
 		sim.isCookingThread = false;
+		sim.cookingTime = 0;
+		sim.timeKnobPos = 0;
 	}
 }
 
@@ -60,5 +71,22 @@ class playSound extends Thread {
 		loop = false;
 		mediaPlayer.stop();
 	}
+}
 
+class returnKnobToCorrectPosition extends Thread {
+	Simulation sim;
+	MeshView timeKnob;
+
+	public returnKnobToCorrectPosition(Simulation sim, MeshView timeKnob) {
+		this.sim = sim;
+		this.timeKnob = timeKnob;
+	}
+
+	public void run() {
+		sim.rt = new RotateTransition(Duration.millis(sim.cookingTime), timeKnob);
+		sim.rt.setAxis(Rotate.Z_AXIS);
+		sim.rt.setByAngle(-90 * sim.timeKnobPos);
+		sim.timeKnobPos = 0;
+		sim.rt.play();
+	}
 }
