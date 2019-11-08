@@ -279,6 +279,61 @@ public class Simulation extends Application {
         ActionHandler ah = new ActionHandler(glass, food, timeKnob);
         ah.start();
 
+
+        PointLight light = new PointLight();
+        light.setTranslateX(400);
+        light.setTranslateY(280);
+        light.setTranslateZ(-1115);
+
+        PointLight light2 = new PointLight(Color.web("#262626"));//ciemny szary tylko lepszy xD //4F4F4F
+        light2.setTranslateX(350);
+        light2.setTranslateY(290);
+        light2.setTranslateZ(-2000);
+
+        PerspectiveCamera camera = new PerspectiveCamera();
+		camera.setNearClip(0.001);
+		camera.setFarClip(100.0);
+        camera.getTransforms().addAll(rotateX, rotateY);
+
+        Group root = new Group(micro,
+                doors,
+                plate,
+                light,
+                light2,
+                food,
+                background[0],
+                background[1],
+                background[2],
+                background[3],
+                background[4],
+                background[5],
+                table,
+                glass,
+                cabinet,
+                cabinet2,
+                knob,
+                timeKnob,
+                drawers,
+                drawers2,
+                dishwasher,
+                refrigerator);
+        Scene scene = new Scene(root, 800, 600, true);
+        //stage.setResizable(false);
+        scene.setCamera(camera);
+
+        scene.setOnMousePressed(me -> {
+            mouseOldX = me.getSceneX();
+            mouseOldY = me.getSceneY();
+        });
+        scene.setOnMouseDragged(me -> {
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            rotateX.setAngle(rotateX.getAngle()-(mousePosY - mouseOldY));
+            rotateY.setAngle(rotateY.getAngle()+(mousePosX - mouseOldX));
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+        });
+
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case SPACE:
@@ -312,63 +367,6 @@ public class Simulation extends Application {
             public void handle(MouseEvent event) {
                 ah.handlePowerKnobEvent(knob);
             }
-        });
-
-
-        PointLight light = new PointLight();
-        light.setTranslateX(400);
-        light.setTranslateY(280);
-        light.setTranslateZ(-1115);
-
-        PointLight light2 = new PointLight(Color.web("#262626"));//ciemny szary tylko lepszy xD //4F4F4F
-        light2.setTranslateX(350);
-        light2.setTranslateY(290);
-        light2.setTranslateZ(-2000);
-
-        PerspectiveCamera camera = new PerspectiveCamera();
-		camera.setNearClip(0.001);
-		camera.setFarClip(100.0);
-
-        Group root = new Group(micro,
-                doors,
-                plate,
-                light,
-                light2,
-                food,
-                background[0],
-                background[1],
-                background[2],
-                background[3],
-                background[4],
-                background[5],
-                table,
-                glass,
-                cabinet,
-                cabinet2,
-                knob,
-                timeKnob,
-                drawers,
-                drawers2,
-                dishwasher,
-                refrigerator);
-        Scene scene = new Scene(root, 800, 600, true);
-        //stage.setResizable(false);
-
-        camera.getTransforms().addAll(rotateX, rotateY);
-
-        scene.setCamera(camera);
-
-        scene.setOnMousePressed(me -> {
-            mouseOldX = me.getSceneX();
-            mouseOldY = me.getSceneY();
-        });
-        scene.setOnMouseDragged(me -> {
-            mousePosX = me.getSceneX();
-            mousePosY = me.getSceneY();
-            rotateX.setAngle(rotateX.getAngle()-(mousePosY - mouseOldY));
-            rotateY.setAngle(rotateY.getAngle()+(mousePosX - mouseOldX));
-            mouseOldX = mousePosX;
-            mouseOldY = mousePosY;
         });
 
         stage.setScene(scene);
