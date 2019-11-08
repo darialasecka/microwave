@@ -23,6 +23,16 @@ public class ActionHandler extends Thread {
 	protected long cookingTime = 0;
 	protected boolean isCookingThread = false;
 	protected RotateTransition rt;
+	private Box glass;
+	private Box food;
+	private MeshView timeKnob;
+
+
+	public ActionHandler(Box glass, Box food, MeshView timeKnob) {
+		this.glass = glass;
+		this.food = food;
+		this.timeKnob = timeKnob;
+	}
 
 
 	public void handleDoorEvent(MeshView doors) {
@@ -53,7 +63,7 @@ public class ActionHandler extends Thread {
 	}
 
 	public void handleCookingEvent(Box glass, Box food, MeshView timeKnob) {
-		if (!areDoorsOpen && !isCookingThread && cookingTime > 0 && powerKnobPos > 0) {
+		if (!areDoorsOpen && !isCookingThread && cookingTime > 0 && powerKnobPos > 0 && System.currentTimeMillis() > lastTimeKnobAction + 2000) {
 			cookingCycles = cookingTime / 9000;
 			CookingTimeHandler animate = new CookingTimeHandler(cookingTime, glass, this, timeKnob);
 			animate.start();
@@ -85,6 +95,17 @@ public class ActionHandler extends Thread {
 			rt.setByAngle(90);
 			powerKnobPos = ++powerKnobPos % 4;
 			rt.play();
+		}
+	}
+
+	public void run() {
+		while (true) {
+			if (!areDoorsOpen && powerKnobPos != 0 && timeKnobPos != 0 && !isCookingThread) {
+				handleCookingEvent(glass, food, timeKnob);
+			}
+			try {
+				this.sleep(3000);
+			} catch (Exception e) {}
 		}
 	}
 }

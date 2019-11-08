@@ -276,16 +276,17 @@ public class Simulation extends Application {
         Rotate rotateX = new Rotate(0, 400, 300.5, -1107, Rotate.X_AXIS);
         Rotate rotateY = new Rotate(0, 400, 300.5, -1107, Rotate.Y_AXIS);
 
-        ActionHandler ah = new ActionHandler();
+        ActionHandler ah = new ActionHandler(glass, food, timeKnob);
+        ah.start();
 
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case SPACE:
                     ah.handleDoorEvent(doors);
                     break;
-                case ENTER:
+                /*case ENTER:
                     ah.handleCookingEvent(glass, food, timeKnob);
-                    break;
+                    break; */
                 case Q:
                     ah.handleTimeKnobEvent(timeKnob);
                     break;
