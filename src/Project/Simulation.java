@@ -5,12 +5,9 @@ import java.util.logging.Logger;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -227,6 +224,7 @@ public class Simulation extends Application {
                 refrigerator);
         Scene scene = new Scene(root, 800, 600, true);
         //stage.setResizable(false);
+        stage.setOnCloseRequest(ev -> System.exit(0));
         scene.setCamera(camera);
 
 
