@@ -22,20 +22,13 @@ public class Simulation extends Application {
     private double mouseOldX;
     private double mouseOldY;
 
-    private double height = 520;
-    private double depth = -700;
-
     ObjModelImporter objModelImporter = new ObjModelImporter();
     ObjModelImporter knobModelImporter = new ObjModelImporter();
     ObjModelImporter timeKnobModelImporter = new ObjModelImporter();
     ObjModelImporter doorModelImporter = new ObjModelImporter();
     ObjModelImporter plateModelImporter = new ObjModelImporter();
     ObjModelImporter tableModelImporter = new ObjModelImporter();
-    ObjModelImporter cabinetModelImporter = new ObjModelImporter();
-    ObjModelImporter dishwasherModelImporter = new ObjModelImporter();
-    ObjModelImporter drawersModelImporter = new ObjModelImporter();
-    ObjModelImporter drawers2ModelImporter = new ObjModelImporter();
-    ObjModelImporter refrigeratorModelImporter = new ObjModelImporter();
+    ObjModelImporter kitchenModelImporter = new ObjModelImporter();
 
     @Override
     public void start(Stage stage) {
@@ -52,17 +45,10 @@ public class Simulation extends Application {
             doorModelImporter.read(url);
             url = this.getClass().getResource("/objects3D/tacka.obj");
             plateModelImporter.read(url);
-            url = this.getClass().getResource("/objects3D/podwojna_szafka.obj");
-            cabinetModelImporter.read(url);
-            url = this.getClass().getResource("/objects3D/z_szufladami.obj");
-            drawersModelImporter.read(url);
-            drawers2ModelImporter.read(url);
             url = this.getClass().getResource("/objects3D/stolik.obj");
             tableModelImporter.read(url);
-            url = this.getClass().getResource("/objects3D/zmywarka.obj");
-            dishwasherModelImporter.read(url);
-            url = this.getClass().getResource("/objects3D/lodowka.obj");
-            refrigeratorModelImporter.read(url);
+            url = this.getClass().getResource("/objects3D/kitchen.obj");
+            kitchenModelImporter.read(url);
         } catch (ImportException ie) {
             Logger.getLogger(getClass().getName()).severe("Could not load file: " + ie.getMessage());
         }
@@ -75,12 +61,8 @@ public class Simulation extends Application {
         MeshView plate = plateModelImporter.getImport()[0];
 
         //Importing furniture
-        MeshView cabinet = cabinetModelImporter.getImport()[0];
+        MeshView kitchen = kitchenModelImporter.getImport()[0];
         MeshView table = tableModelImporter.getImport()[0];
-        MeshView drawers = drawersModelImporter.getImport()[0];
-        MeshView drawers2 = drawers2ModelImporter.getImport()[0];
-        MeshView dishwasher = dishwasherModelImporter.getImport()[0];
-        MeshView refrigerator = refrigeratorModelImporter.getImport()[0];
 
         //Textures:
         PhongMaterial melon = new PhongMaterial();
@@ -97,6 +79,9 @@ public class Simulation extends Application {
 
         PhongMaterial wood = new PhongMaterial();
         wood.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/wood.jpg")));
+
+        PhongMaterial kitchen_set = new PhongMaterial();
+        kitchen_set.setDiffuseMap(new Image(getClass().getResourceAsStream("/textures/kitchen.jpg")));
 
         //Other shapes
         Box food = new Box(0.6, 0.6, 0.6);
@@ -166,36 +151,13 @@ public class Simulation extends Application {
         table.getTransforms().addAll(scale);
         table.setMaterial(wood);
 
-        scale = new Scale(15,15,15);
-        cabinet.setTranslateX(310);
-        cabinet.setTranslateY(height);
-        cabinet.setTranslateZ(depth);
-        cabinet.getTransforms().addAll(scale);
-        cabinet.setMaterial(wood);
+        scale = new Scale(20,20,20);
+        kitchen.setTranslateX(400);
+        kitchen.setTranslateY(470);
+        kitchen.setTranslateZ(-700);
+        kitchen.getTransforms().addAll(scale);
+        kitchen.setMaterial(kitchen_set);
 
-        drawers.setTranslateX(444.1);
-        drawers.setTranslateY(height);
-        drawers.setTranslateZ(depth);
-        drawers.getTransforms().addAll(scale);
-        drawers.setMaterial(wood);
-
-        drawers2.setTranslateX(530);
-        drawers2.setTranslateY(height);
-        drawers2.setTranslateZ(depth);
-        drawers2.getTransforms().addAll(scale);
-        drawers2.setMaterial(wood);
-
-        dishwasher.setTranslateX(170);
-        dishwasher.setTranslateY(height);
-        dishwasher.setTranslateZ(-690);
-        dishwasher.getTransforms().addAll(scale);
-        dishwasher.setMaterial(wood);
-
-        refrigerator.setTranslateX(72);
-        refrigerator.setTranslateY(height);
-        refrigerator.setTranslateZ(depth);
-        refrigerator.getTransforms().addAll(scale);
-        refrigerator.setMaterial(wood);
 
         //Microwave's logic
         ActionHandler ah = new ActionHandler(glass, food, timeKnob);
@@ -217,11 +179,7 @@ public class Simulation extends Application {
                 glass,
                 knob,
                 timeKnob,
-                cabinet,
-                drawers,
-                drawers2,
-                dishwasher,
-                refrigerator);
+                kitchen);
         Scene scene = new Scene(root, 800, 600, true);
         //stage.setResizable(false);
         stage.setOnCloseRequest(ev -> System.exit(0));
@@ -328,7 +286,7 @@ public class Simulation extends Application {
         background[5].setTranslateX(400);
         background[5].setRotationAxis(Rotate.X_AXIS);
         background[5].setRotate(-90);
-        background[5].setTranslateY(750);//1000
+        background[5].setTranslateY(748);//1000
         background[5].setWidth(2500);
         background[5].setHeight(2200);
         PhongMaterial floor = new PhongMaterial();
@@ -337,5 +295,4 @@ public class Simulation extends Application {
 
         return background;
     }
-
 }
